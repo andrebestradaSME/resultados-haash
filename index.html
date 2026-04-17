@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ha*Ash · Teasing Survey Results</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f0f2f7;--white:#fff;--card:#fff;
+  --accent:#f54a9b;--accent-light:#e8f0fd;
+  --accentsentimiento:#4a94f5;--accent-light:#e8f0fd;
+  --track1:#7e27da;--track1-light:#e5c8fc;
+  --track2:#f54a9b;--track2-light:#fccbf4;
+  --purple:#8b5cf6;--purple-light:#f0eaff;
+  --green:#34c77b;--green-light:#e6f9ef;
+  --text:#1e2a3a;--text-sub:#7a8ba0;--text-light:#b0bac8;
+  --border:#eaecf2;
+  --shadow:0 1px 4px rgba(0,0,0,0.04);
+  --shadow-hover:0 4px 16px rgba(0,0,0,0.07);
+  --radius:12px;--sidebar-w:200px;
+}
+html{font-size:13.5px}
+html { scroll-behavior: smooth; }
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+.login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:opacity .4s,visibility .4s}
+.login-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.login-box{background:var(--white);border-radius:20px;padding:48px 40px;box-shadow:0 8px 40px rgba(0,0,0,0.08);border:1px solid var(--border);text-align:center;max-width:380px;width:90%}
+.login-icon{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--accent),#fda4d3);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.8rem;box-shadow:0 4px 16px rgba(74,143,231,0.25)}
+.login-box h2{font-size:1.3rem;font-weight:700;margin-bottom:4px}
+.login-box p{font-size:.82rem;color:var(--text-sub);margin-bottom:24px;line-height:1.4}
+.login-input{width:100%;padding:12px 16px;border-radius:10px;border:1.5px solid var(--border);font-size:1rem;font-family:inherit;text-align:center;letter-spacing:8px;font-weight:600;color:var(--text);transition:border-color .2s;outline:none;-webkit-text-security:disc}
+.login-input:focus{border-color:var(--accent)}
+.login-input.error{border-color:#e85d5d;animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.login-btn{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:.9rem;font-weight:600;cursor:pointer;margin-top:14px;font-family:inherit;transition:all .2s}
+.login-btn:hover{background:#2d6cc4;transform:translateY(-1px);box-shadow:0 4px 12px rgba(74,143,231,0.3)}
+.login-error-msg{font-size:.75rem;color:#e85d5d;margin-top:10px;min-height:18px}
+
+.app{display:grid;grid-template-columns:var(--sidebar-w) 1fr;min-height:100vh;max-width:1440px;margin:0 auto;transition:grid-template-columns .3s ease}
+.app.collapsed{grid-template-columns:0px 1fr}
+
+.sidebar{background:var(--white);padding:28px 16px;display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden;white-space:nowrap;transition:padding .3s,opacity .3s}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.app.collapsed .sidebar{padding:28px 0;opacity:0;pointer-events:none}
+.logo{font-weight:700;font-size:1.1rem;color:var(--text);margin-bottom:36px;padding-left:12px;display:flex;align-items:center;gap:8px}
+.logo span{color:var(--accent)}
+.nav-label{font-size:.65rem;text-transform:uppercase;letter-spacing:1.8px;color:var(--text-light);padding-left:12px;margin-bottom:8px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;font-size:.88rem;color:var(--text-sub);cursor:pointer;transition:all .15s;font-weight:500;margin-bottom:2px}
+.nav-item:hover{color:var(--accent);background:var(--accent-light)}
+.nav-item.active{color:var(--accent);font-weight:600}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:.6}
+.nav-item.active svg{opacity:1}
+.nav-item { text-decoration: none; color: inherit; }
+.sidebar-spacer{flex:1}
+.sidebar-badge{margin:12px 8px 0;padding:14px;border-radius:12px;background:linear-gradient(135deg,#f54a9b,#fda4d3);color:#fff}
+.sidebar-badge h5{font-size:.78rem;font-weight:600;margin-bottom:3px}
+.sidebar-badge p{font-size:.67rem;opacity:.8;line-height:1.4}
+
+.toggle-sidebar{position:fixed;top:16px;left:16px;z-index:200;width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--white);color:var(--text-sub);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:var(--shadow);transition:all .3s}
+.toggle-sidebar:hover{background:var(--accent-light);color:var(--accent)}
+.toggle-sidebar {
+  left: auto;
+  right: 16px;
+}
+
+
+.main{padding:28px 28px 40px;overflow-y:auto;grid-column:2}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-left:60px}
+.app:not(.collapsed) .page-header{padding-left:0}
+.page-header h1{font-size:1.5rem;font-weight:700}
+.date-badge{font-size:.75rem;color:var(--text-sub);font-weight:500;background:var(--white);padding:7px 14px;border-radius:20px;border:1px solid var(--border)}
+
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:18px 16px;border:1px solid var(--border);box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s}
+.stat-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-1px)}
+.sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sc-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.sc-value{font-size:1.65rem;font-weight:700;line-height:1}
+.sc-label{font-size:.72rem;color:var(--text-sub);font-weight:500}
+.sc-sub{font-size:.68rem;color:var(--text-light);margin-top:3px}
+
+.card{background:var(--card);border-radius:var(--radius);padding:20px;border:1px solid var(--border);box-shadow:var(--shadow);transition:box-shadow .2s}
+.card:hover{box-shadow:var(--shadow-hover)}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-head h3{font-size:.95rem;font-weight:600}
+.card { scroll-margin-top: 20px; }
+.pill{font-size:.6rem;text-transform:uppercase;letter-spacing:.8px;padding:3px 10px;border-radius:6px;font-weight:600}
+
+.insight-btn{width:26px;height:26px;border-radius:50%;border:none;background:var(--accent-light);color:var(--accent);font-size:.75rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;position:relative;transition:all .2s;flex-shrink:0;font-family:inherit}
+.insight-btn:hover{background:var(--accent);color:#fff;transform:scale(1.1)}
+.insight-btn .tip{position:absolute;bottom:calc(100% + 10px);right:-8px;background:var(--text);color:#fff;padding:10px 14px;border-radius:10px;font-size:.74rem;font-weight:400;line-height:1.45;width:240px;text-align:left;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.23,1,.32,1);box-shadow:0 8px 24px rgba(0,0,0,0.18);z-index:100}
+.insight-btn .tip::after{content:'';position:absolute;top:100%;right:16px;border:6px solid transparent;border-top-color:var(--text)}
+.insight-btn:hover .tip{opacity:1;transform:translateY(0);pointer-events:auto}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.full-w{margin-bottom:18px}
+
+.r-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.r-star{width:12px;font-size:.78rem;font-weight:600;color:var(--text-light);text-align:right}
+.r-track{flex:1;height:18px;background:var(--bg);border-radius:6px;overflow:hidden}
+.r-fill{height:100%;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:.6rem;font-weight:600;color:rgba(255,255,255,.85);transition:width 1s cubic-bezier(.22,1,.36,1)}
+.r-pct{width:36px;font-size:.7rem;font-weight:600;color:var(--text-sub);text-align:right}
+
+.donut-wrap{display:flex;align-items:center;gap:20px;justify-content:center;padding:8px 0}
+.donut-svg{width:130px;height:130px}
+.donut-center{font-size:1.3rem;font-weight:700;fill:var(--text)}
+.donut-center-sub{font-size:.55rem;fill:var(--text-sub);font-weight:500}
+.legend{display:flex;flex-direction:column;gap:7px}
+.legend-row{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--text-sub)}
+.legend-dot{width:8px;height:8px;border-radius:3px;flex-shrink:0}
+.legend-val{margin-left:auto;font-weight:600;color:var(--text);min-width:45px;text-align:right}
+
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px}
+.summary-col h4{font-size:.82rem;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.summary-col ul{list-style:none;padding:0}
+.summary-col li{font-size:.78rem;color:var(--text-sub);line-height:1.5;padding:6px 0 6px 16px;position:relative;border-bottom:1px solid var(--border)}
+.summary-col li:last-child{border-bottom:none}
+
+/* CONTEXTS — now clickable */
+.ctx-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;border-radius:8px;cursor:pointer;transition:all .15s;border:2px solid transparent}
+.ctx-row:hover{background:var(--accent-light)}
+.ctx-row.active{background:var(--accent-light);border-color:var(--accent)}
+.ctx-emoji{width:22px;text-align:center;font-size:.9rem}
+.ctx-name{width:80px;font-size:.78rem;color:var(--text-sub);font-weight:500}
+.ctx-row.active .ctx-name{color:var(--accent);font-weight:600}
+.ctx-track{flex:1;height:16px;background:var(--bg);border-radius:6px;overflow:hidden}
+.ctx-fill{height:100%;border-radius:6px;transition:width 1s cubic-bezier(.22,1,.36,1)}
+.ctx-num{width:80px;font-size:.72rem;font-weight:600;color:var(--text-sub);text-align:right}
+.ctx-hint{font-size:.65rem;color:var(--text-light);text-align:center;margin-top:10px}
+
+/* DAILY BAR CHART */
+.daily-wrap{display:flex;align-items:flex-end;gap:12px;padding:8px 0;min-height:140px;overflow-x:auto}
+.daily-bar-col{flex:1;min-width:60px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.daily-bar-val{font-size:.68rem;font-weight:600;color:var(--text-sub)}
+.daily-bar{width:100%;background:linear-gradient(180deg,var(--accent),#fda4d3);border-radius:6px 6px 2px 2px;transition:all .6s cubic-bezier(.22,1,.36,1);min-height:4px;position:relative;cursor:default}
+.daily-bar:hover{filter:brightness(1.1)}
+.daily-bar-label{font-size:.68rem;color:var(--text-light);font-weight:500;text-align:center;line-height:1.2}
+.daily-bar-label .day{display:block;font-weight:600;color:var(--text-sub);font-size:.72rem}
+
+/* SENTIMENT */
+.sent-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+.sent-chip{display:flex;flex-direction:column;align-items:center;padding:16px 28px;border-radius:12px;min-width:120px;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.sent-chip:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+.sent-chip.active{border-color:var(--text)}
+.sent-chip .sv{font-size:1.5rem;font-weight:700}
+.sent-chip .sl{font-size:.72rem;font-weight:500;margin-top:2px}
+.sent-chip .sp{font-size:.68rem;margin-top:4px;font-weight:600}
+.click-hint{font-size:.65rem;color:var(--text-light);text-align:center;margin-top:10px}
+
+/* RESP LIST (reused for sentiment + contexts) */
+.resp-panel{margin-top:14px;display:none}
+.resp-panel.visible{display:block}
+.resp-list{max-height:360px;overflow-y:auto;border:1px solid var(--border);border-radius:10px}
+.resp-item{padding:10px 14px;border-bottom:1px solid var(--border);font-size:.8rem;line-height:1.5;display:flex;gap:10px;align-items:flex-start}
+.resp-item:last-child{border-bottom:none}
+.resp-item:nth-child(odd){background:rgba(0,0,0,.01)}
+.resp-item:hover{background:var(--accent-light)}
+.resp-text{flex:1;color:var(--text)}
+.resp-tags{display:flex;flex-direction:column;gap:4px;flex-shrink:0;align-items:flex-end}
+.resp-fav{font-size:.6rem;padding:2px 8px;border-radius:4px;font-weight:600;white-space:nowrap}
+.resp-stars{font-size:.6rem;color:var(--text-light);white-space:nowrap;font-family:monospace}
+.resp-count-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:.75rem;color:var(--text-sub)}
+
+.footer{text-align:center;padding:24px;font-size:.68rem;color:var(--text-light)}
+.footer a{color:var(--accent);text-decoration:none}
+
+@media(max-width:960px){.app{grid-template-columns:1fr!important}.sidebar{display:none}.main{grid-column:1}.toggle-sidebar{display:none}.page-header{padding-left:0!important}}
+@media(max-width:640px){.stats-row{grid-template-columns:repeat(2,1fr)}.grid-2,.summary-grid{grid-template-columns:1fr}.main{padding:16px}.login-box{padding:36px 24px}}
+.fi{opacity:0;transform:translateY(10px);animation:fi .5s ease forwards}
+@keyframes fi{to{opacity:1;transform:translateY(0)}}
+.fi:nth-child(1){animation-delay:.02s}.fi:nth-child(2){animation-delay:.06s}.fi:nth-child(3){animation-delay:.1s}.fi:nth-child(4){animation-delay:.14s}
+</style>
+</head>
+<body>
+
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <div class="login-icon">🎵</div>
+    <h2>Ha*Ash Insights</h2>
+    <p>Resultados de la encuesta de teasing.<br>Ingresa el código de acceso para continuar.</p>
+    <input type="password" class="login-input" id="loginInput" placeholder="•••" maxlength="6" autofocus>
+    <button class="login-btn" id="loginBtn">Acceder</button>
+    <div class="login-error-msg" id="loginError"></div>
+  </div>
+</div>
+
+<div class="app" id="app">
+<button class="toggle-sidebar" id="toggleBtn" title="Ocultar/mostrar menú">☰</button>
+
+<nav class="sidebar">
+  <div class="logo"><span>Ha*Ash</span> Insights</div>
+  <div class="nav-label">Menu</div>
+  
+  <a class="nav-item active" href="#top">
+    <svg viewBox="0 0 20 20" fill="currentColor">
+      <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zm10 0a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
+    </svg>Discover
+  </a>
+  
+  <a class="nav-item" href="#tracks">
+    <svg viewBox="0 0 20 20" fill="currentColor">
+      <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
+    </svg>Tracks
+  </a>
+  
+  <a class="nav-item" href="#comentarios">
+    <svg viewBox="0 0 20 20" fill="currentColor">
+      <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zm8 0a3 3 0 11-6 0 3 3 0 016 0zm-4.07 11c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+    </svg>Comentarios
+  </a>
+  
+  <a class="nav-item" href="#contextos">
+    <svg viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+    </svg>Contextos
+  </a>
+  
+      <div class="nav-label" style="margin-top:24px">Reportes</div>
+  <div class="nav-item" id="exportBtn"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>Exportar data.js</div>
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-badge"><h5>Encuesta Teasing</h5><p id="dateRange">—</p></div>
+</nav>
+
+<main class="main">
+  <div class="page-header fi" id="top"><h1>Resultados Teasing</h1><span  id="dateBadge"></span></div>
+
+  <div class="stats-row">
+    <div class="stat-card fi"><div class="sc-top"><div class="sc-icon" style="background:var(--accent-light);color:var(--accent)">👥</div><button class="insight-btn">i<div class="tip">Respuestas totales recolectadas en la encuesta.</div></button></div><div class="sc-value" style="color:#4c6ef6" id="v-total"></div><div class="sc-label">Respuestas totales</div><div class="sc-sub" id="v-daterange"></div></div>
+    <div class="stat-card fi"><div class="sc-top"><div class="sc-icon" style="background:var(--track1-light);color:var(--track1)">⭐</div><button class="insight-btn">i<div class="tip" id="t-t1">Promedio de calificación Track 1.</div></button></div><div class="sc-value" style="color:var(--track1)" id="v-t1avg"></div><div class="sc-label">Qué Le Pongo</div><div class="sc-sub">Promedio Track 1</div></div>
+    <div class="stat-card fi"><div class="sc-top"><div class="sc-icon" style="background:var(--track2-light);color:var(--track2)">⭐</div><button class="insight-btn">i<div class="tip" id="t-t2">Promedio de calificación Track 2.</div></button></div><div class="sc-value" style="color:var(--track2)" id="v-t2avg"></div><div class="sc-label">Si Me Hubieras Llamado Ayer</div><div class="sc-sub">Promedio Track 2</div></div>
+    <div class="stat-card fi"><div class="sc-top"><div class="sc-icon" style="background:var(--green-light);color:var(--green)">💬</div><button class="insight-btn">i<div class="tip">Tasa de respuesta del campo abierto — muy alta indica fans enganchados.</div></button></div><div class="sc-value" style="color:var(--green)" id="v-openpct"></div><div class="sc-label">Tasa respuesta abierta</div><div class="sc-sub" id="v-opencount"></div></div>
+  </div>
+
+  <div class="grid-2" id="tracks">
+    <div class="card fi">
+      <div class="card-head"><h3>Qué Le Pongo</h3><span class="pill" style="background:var(--track1-light);color:var(--track1)">Track 1</span></div>
+      <div id="bars1"></div>
+      <div style="text-align:center;margin-top:10px"><span style="font-size:1.5rem;font-weight:700;color:var(--track1)" id="v-t1pct"></span><span style="display:block;font-size:.7rem;color:var(--text-light)">calificaron 5 ★</span></div>
+    </div>
+    <div class="card fi">
+      <div class="card-head"><h3>Si Me Hubieras Llamado Ayer</h3><span class="pill" style="background:var(--track2-light);color:var(--track2)">Track 2</span></div>
+      <div id="bars2"></div>
+      <div style="text-align:center;margin-top:10px"><span style="font-size:1.5rem;font-weight:700;color:var(--track2)" id="v-t2pct"></span><span style="display:block;font-size:.7rem;color:var(--text-light)">calificaron 5 ★</span></div>
+    </div>
+  </div>
+
+  <div class="card full-w fi">
+    <div class="card-head"><h3>Track favorito mencionado</h3></div>
+    <div class="donut-wrap" id="donut"></div>
+  </div>
+
+  <div class="card full-w fi" id="comentarios">
+    <div class="card-head"><h3>¿Qué dicen los fans de cada track?</h3><span class="pill" style="background:var(--accent-light);color:var(--accent)">Resumen cualitativo</span></div>
+    <div class="summary-grid" id="summary-grid"></div>
+  </div>
+
+  <!-- CONTEXTS — CLICKABLE NOW -->
+  <div class="card full-w fi" id="contextos">
+    <div class="card-head"><h3>¿Dónde escucharían las canciones?</h3><span class="pill" style="background:var(--accent-light);color:var(--accent)">Contextos</span></div>
+    <div id="ctx"></div>
+    <div class="ctx-hint">👆 Click en una categoría para ver las respuestas</div>
+    <div class="resp-panel" id="ctx-resp-panel">
+      <div class="resp-count-bar"><span id="ctx-resp-title"></span><span id="ctx-resp-count"></span></div>
+      <div class="resp-list" id="ctx-resp-list"></div>
+    </div>
+  </div>
+
+  <!-- DAILY BAR CHART (replaces hourly timeline) -->
+  <div class="card full-w fi">
+    <div class="card-head"><h3>Respuestas por día</h3></div>
+    <div class="daily-wrap" id="daily"></div>
+  </div>
+
+  <div class="card full-w fi">
+    <div class="card-head"><h3>Sentimiento en respuestas abiertas</h3></div>
+    <div class="sent-row" id="sent-chips"></div>
+    <div class="click-hint">👆 Click en una categoría para ver las respuestas</div>
+    <div class="resp-panel" id="resp-panel">
+      <div class="resp-count-bar"><span id="resp-title"></span><span id="resp-count"></span></div>
+      <div class="resp-list" id="resp-list"></div>
+    </div>
+  </div>
+
+  <div class="footer">Ha*Ash Teasing Survey · <span id="genDate"></span> · Reporte generado por <a href="#">Content Strategy and Analytics</a></div>
+</main>
+</div>
+
+<script src="data.js"></script>
+<script>
+// ── LOGIN ──
+(function(){
+  const ov=document.getElementById('loginOverlay'),inp=document.getElementById('loginInput'),btn=document.getElementById('loginBtn'),err=document.getElementById('loginError');
+  function go(){if(inp.value==='444'){ov.classList.add('hidden');sessionStorage.setItem('haash_auth','1')}else{inp.classList.add('error');err.textContent='Código incorrecto';setTimeout(()=>{inp.classList.remove('error');err.textContent=''},1200);inp.value='';inp.focus()}}
+  btn.addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+  if(sessionStorage.getItem('haash_auth')==='1')ov.classList.add('hidden');
+})();
+
+document.getElementById('toggleBtn').addEventListener('click',()=>{document.getElementById('app').classList.toggle('collapsed')});
+
+// ── EXPORT ──
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  if(typeof DATA!=='undefined'){
+    const blob=new Blob(['// Ha*Ash Teasing Survey — Datos del dashboard\n// Exportado: '+new Date().toISOString()+'\n\nconst DATA = '+JSON.stringify(DATA,null,2)+';\n'],{type:'application/javascript'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='data.js';a.click();URL.revokeObjectURL(a.href);
+  }
+});
+
+// ── RENDER ──
+const D=DATA, total=D.total;
+
+// Header / stats
+document.getElementById('v-total').textContent=total.toLocaleString();
+document.getElementById('v-t1avg').textContent=D.track1.avg;
+document.getElementById('v-t2avg').textContent=D.track2.avg;
+document.getElementById('v-openpct').textContent=(D.openCount/total*100).toFixed(1)+'%';
+document.getElementById('v-opencount').textContent=D.openCount.toLocaleString()+' comentarios';
+document.getElementById('v-t1pct').textContent=D.track1.fivePct+'%';
+document.getElementById('v-t2pct').textContent=D.track2.fivePct+'%';
+document.getElementById('t-t1').textContent=D.track1.fivePct+'% dio 5★. Buena recepción con algo de dispersión.';
+document.getElementById('t-t2').textContent=D.track2.fivePct+'% dio 5★. Consenso casi unánime.';
+
+// Date range
+if(D.daily && D.daily.length){
+  const fmt=d=>{const p=d.split('-');return `${p[2]}/${p[1]}`};
+  const first=fmt(D.daily[0][0]),last=fmt(D.daily[D.daily.length-1][0]);
+  const range=first===last?first:`${first} – ${last}`;
+  
+  document.getElementById('v-daterange').textContent=`${D.daily.length} día${D.daily.length>1?'s':''} de recolección`;
+  document.getElementById('dateRange').textContent=range;
+}
+if(D.generated)document.getElementById('genDate').textContent=new Date(D.generated).toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'});
+
+// Rating bars
+function bars(id,dist,color){
+  const el=document.getElementById(id),mx=Math.max(...Object.values(dist).map(v=>+v));let h='';
+  for(let i=5;i>=1;i--){const c=+(dist[i]||dist[String(i)]||0),p=(c/total*100).toFixed(1),w=(c/mx*100).toFixed(1);
+  h+=`<div class="r-row"><span class="r-star">${i}</span><div class="r-track"><div class="r-fill" style="width:${w}%;background:${color}">${c>200?c.toLocaleString():''}</div></div><span class="r-pct">${p}%</span></div>`}el.innerHTML=h}
+bars('bars1',D.track1.dist,'linear-gradient(90deg,#7e27da,#904cf6)');
+bars('bars2',D.track2.dist,'linear-gradient(90deg,#f54a9b,#fda4d3)');
+
+// Donut
+(function(){const el=document.getElementById('donut');const m=D.mentions;const d=[['Si Me Hubieras Llamado Ayer',m['Si Me Hubieras Llamado Ayer']||0,'#f54a9b'],['Qué Le Pongo',m['Qué Le Pongo']||0,'#7e27da'],['Ambas',m['Ambas']||0,'#f25e1d'],['No especifican',m['No especifican']||0,'#d4d8e3']];const tot=d.reduce((s,e)=>s+e[1],0);if(!tot){el.innerHTML='<p style="color:var(--text-light)">Sin datos</p>';return}const R=50,CX=65,CY=65,C=2*Math.PI*R;let off=0,circles='';d.forEach(([_,v,c])=>{const dash=C*(v/tot),gap=C-dash;circles+=`<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${c}" stroke-width="14" stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${-off}"/>`;off+=dash});let lg='';d.forEach(([l,v,c])=>{lg+=`<div class="legend-row"><span class="legend-dot" style="background:${c}"></span>${l}<span class="legend-val">${v.toLocaleString()}</span></div>`});el.innerHTML=`<svg class="donut-svg" viewBox="0 0 130 130"><circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="var(--bg)" stroke-width="14"/>${circles}<text x="${CX}" y="${CY-2}" text-anchor="middle" class="donut-center">${D.openCount.toLocaleString()}</text><text x="${CX}" y="${CY+12}" text-anchor="middle" class="donut-center-sub">respuestas</text></svg><div class="legend">${lg}</div>`})();
+
+// Summary bullets
+(function(){
+  const el=document.getElementById('summary-grid');
+  function col(title,color,bullets){
+    const lis=bullets.map(b=>`<li><span style="position:absolute;left:0;top:12px;width:6px;height:6px;border-radius:50%;background:${color}"></span>${b}</li>`).join('');
+    return`<div class="summary-col"><h4><span style="width:10px;height:10px;border-radius:4px;background:${color};display:inline-block"></span>${title}</h4><ul>${lis}</ul></div>`;
+  }
+  el.innerHTML=col('Qué Le Pongo','#7e27da',D.summaryTrack1||[])+col('Si Me Hubieras Llamado Ayer','#f54a9b',D.summaryTrack2||[]);
+})();
+
+// ── CONTEXTS: clickable, shows responses for that context ──
+(function(){
+  const el=document.getElementById('ctx');
+  const panel=document.getElementById('ctx-resp-panel');
+  const list=document.getElementById('ctx-resp-list');
+  const titleEl=document.getElementById('ctx-resp-title');
+  const countEl=document.getElementById('ctx-resp-count');
+  const d=D.contexts||[];
+  if(!d.length){el.innerHTML='<p style="color:var(--text-light)">Sin datos</p>';return}
+  const mx=d[0][2];let h='';
+  d.forEach(([emoji,name,count])=>{
+    const w=(count/mx*100).toFixed(1);
+    const p=(count/D.openCount*100).toFixed(1);
+    h+=`<div class="ctx-row" data-ctx="${name}"><span class="ctx-emoji">${emoji}</span><span class="ctx-name">${name}</span><div class="ctx-track"><div class="ctx-fill" style="width:${w}%;background:linear-gradient(90deg,var(--accent),#fda4d3)"></div></div><span class="ctx-num">${count.toLocaleString()} (${p}%)</span></div>`;
+  });
+  el.innerHTML=h;
+
+  let activeCtx=null;
+  function favColor(f){if(f==='SMHLA')return'background:var(--track2-light);color:var(--track2)';if(f==='Qué Le Pongo')return'background:var(--track1-light);color:var(--track1)';if(f==='Ambas')return'background:var(--purple-light);color:var(--purple)';return'background:var(--bg);color:var(--text-light)'}
+  function favLabel(f){return f==='SMHLA'?'Si Me Hubieras...':f}
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+  el.querySelectorAll('.ctx-row').forEach(row=>{
+    row.addEventListener('click',()=>{
+      const ctx=row.dataset.ctx;
+      el.querySelectorAll('.ctx-row').forEach(r=>r.classList.remove('active'));
+      if(activeCtx===ctx){activeCtx=null;panel.classList.remove('visible');return}
+      activeCtx=ctx;row.classList.add('active');
+      const entry=d.find(x=>x[1]===ctx);
+      const emoji=entry?entry[0]:'';
+      const totalForCtx=entry?entry[2]:0;
+      const items=(D.contextResponses&&D.contextResponses[ctx])||[];
+      titleEl.textContent=`${emoji} ${ctx}`;titleEl.style.color='var(--accent)';
+      countEl.textContent=`${items.length} de ${totalForCtx.toLocaleString()} mostradas`;
+      let html='';items.forEach(r=>{html+=`<div class="resp-item"><div class="resp-text">${esc(r.t)}</div><div class="resp-tags"><span class="resp-fav" style="${favColor(r.f)}">${favLabel(r.f)}</span><span class="resp-stars">T1:${'★'.repeat(r.t1)}${'☆'.repeat(5-r.t1)} T2:${'★'.repeat(r.t2)}${'☆'.repeat(5-r.t2)}</span></div></div>`});
+      list.innerHTML=html||'<div class="resp-item"><div class="resp-text" style="color:var(--text-light)">Sin respuestas disponibles para esta categoría.</div></div>';
+      panel.classList.add('visible');panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+    });
+  });
+})();
+
+// ── DAILY BAR CHART ──
+(function(){
+  const el=document.getElementById('daily');
+  const d=D.daily||[];
+  if(!d.length){el.innerHTML='<p style="color:var(--text-light)">Sin datos</p>';return}
+  const mx=Math.max(...d.map(x=>x[1]));
+  const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  let h='';
+  d.forEach(([date,count])=>{
+    const parts=date.split('-');  // YYYY-MM-DD
+    const day=parseInt(parts[2],10);
+    const mo=months[parseInt(parts[1],10)-1];
+    const heightPct=(count/mx*100).toFixed(1);
+    const maxBarHeight=100;
+    h+=`<div class="daily-bar-col"><div class="daily-bar-val">${count.toLocaleString()}</div><div class="daily-bar" style="height:${maxBarHeight*heightPct/100}px" title="${date}: ${count.toLocaleString()} respuestas"></div><div class="daily-bar-label"><span class="day">${day}</span>${mo}</div></div>`;
+  });
+  el.innerHTML=h;
+})();
+
+// ── SENTIMENT ──
+(function(){
+  const chips=document.getElementById('sent-chips'),panel=document.getElementById('resp-panel'),list=document.getElementById('resp-list'),titleEl=document.getElementById('resp-title'),countEl=document.getElementById('resp-count');
+  const s=D.sentiment||{pos:0,neu:0};
+  const cats=[
+    {key:'pos',label:'Positivo explícito',count:s.pos,pct:(s.pos/D.openCount*100).toFixed(1)+'%',color:'var(--green)',bg:'var(--green-light)',desc:'Usaron "amo", "encanta", "perfecta", etc.'},
+    {key:'neu',label:'Neutral / positivo',count:s.neu,pct:(s.neu/D.openCount*100).toFixed(1)+'%',color:'var(--accentsentimiento)',bg:'var(--accent-light)',desc:'Sin keywords explícitos pero sin negativos'}
+  ];
+  let activeKey=null;
+  cats.forEach(cat=>{
+    const chip=document.createElement('div');chip.className='sent-chip';chip.style.background=cat.bg;
+    chip.innerHTML=`<div class="sv" style="color:${cat.color}">${cat.count.toLocaleString()}</div><div class="sl" style="color:${cat.color}">${cat.label}</div><div class="sp" style="color:${cat.color}">${cat.pct}</div>`;
+    chip.addEventListener('click',()=>{
+      document.querySelectorAll('.sent-chip').forEach(c=>c.classList.remove('active'));
+      if(activeKey===cat.key){activeKey=null;panel.classList.remove('visible');return}
+      activeKey=cat.key;chip.classList.add('active');showResp(cat)
+    });chips.appendChild(chip);
+  });
+  function favColor(f){if(f==='SMHLA')return'background:var(--track2-light);color:var(--track2)';if(f==='Qué Le Pongo')return'background:var(--track1-light);color:var(--track1)';if(f==='Ambas')return'background:var(--purple-light);color:var(--purple)';return'background:var(--bg);color:var(--text-light)'}
+  function favLabel(f){return f==='SMHLA'?'Si Me Hubieras...':f}
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  function showResp(cat){
+    const data=(D.responses&&D.responses[cat.key])||[];
+    titleEl.textContent=cat.label;titleEl.style.color=cat.color;
+    countEl.textContent=`${data.length} de ${cat.count.toLocaleString()} · ${cat.desc}`;
+    let h='';data.forEach(r=>{h+=`<div class="resp-item"><div class="resp-text">${esc(r.t)}</div><div class="resp-tags"><span class="resp-fav" style="${favColor(r.f)}">${favLabel(r.f)}</span><span class="resp-stars">T1:${'★'.repeat(r.t1)}${'☆'.repeat(5-r.t1)} T2:${'★'.repeat(r.t2)}${'☆'.repeat(5-r.t2)}</span></div></div>`});
+    list.innerHTML=h;panel.classList.add('visible');panel.scrollIntoView({behavior:'smooth',block:'nearest'})
+  }
+})();
+</script>
+</body>
+</html>
